@@ -77,13 +77,26 @@ body {
 }
 
 .rhythm-selector {
-    text-align:left;
+    display: flex;
+    align-items: center;
+    gap:12px;
+    margin-bottom:20px;
+    font-weight:bold;
+    justify-content: center;
 }
 
 .rhythm-selector label {
-    display: block;
-    margin-bottom: 8px;
     font-weight: bold;
+}
+
+.rhythm-selector select {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    background-color: var(--input-bg);
+    font-size: 1rem;
+    appearance:none;
 }
 
 .btns {
@@ -209,17 +222,6 @@ body {
 .note-instructions p {
     margin: 0;
     padding: 0;
-}
-
-select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid var(--input-border);
-    border-radius: 5px;
-    background-color: var(--input-bg);
-    font-size: 1rem;
-    appearance:none;
 }
 
 .drums {
@@ -459,4 +461,26 @@ select {
     text-decoration:none;
     color:rgb(0, 115, 255);
     cursor:pointer;
+}
+
+.volume {
+    display: flex;
+    align-items: center;
+    gap:12px;
+    margin-bottom:15px;
+    font-weight:bold;
+    justify-content: center;
+}
+
+.volume label {
+    display: block;
+    font-weight: bold;
+}
+
+input[type="range"] {
+    height: 8px;
+    background: #a6a6a6;
+    border-radius: 5px;
+    appearance: none;
+    cursor: pointer;
 }
