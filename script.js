@@ -1,6 +1,20 @@
 let measureCount = 1
 let selectedRhythm = 4
 
+let bassVolume = 1
+let drumVolume = 1
+
+const bassVolumeSlider = document.getElementById('bass-volume');
+const drumVolumeSlider = document.getElementById('drum-volume');
+
+function updateBassVolume() {
+    bassVolume = bassVolumeSlider.value
+}
+
+function updateDrumVolume() {
+    drumVolume = drumVolumeSlider.value
+}
+
 document.getElementById("rhythm-select").addEventListener("change", function() {
     selectedRhythm = parseInt(this.value, 10);
     updateMeasures();
@@ -184,8 +198,10 @@ function playNoteAudio(note) {
     if (buffer) {
         const source = audioCtx.createBufferSource();
         source.buffer = buffer;
-        source.connect(audioCtx.destination);
-        source.start();
+        const gainNode = audioCtx.createGain(); // Create a gain node
+        gainNode.gain.value = bassVolume; // Set the volume (1.0 is default, lower values reduce volume)
+        source.connect(gainNode).connect(audioCtx.destination); // Connect source to gain node
+        source.start(0);
         currentAudioSource = source;
     }
 }
@@ -300,10 +316,10 @@ function playDrumSound(drumType) {
         const source = audioCtx.createBufferSource();
         source.buffer = buffer;
         const gainNode = audioCtx.createGain(); // Create a gain node
-        gainNode.gain.value = gainValues[drumType]; // Set the volume (1.0 is default, lower values reduce volume)
+        gainNode.gain.value = gainValues[drumType] * drumVolume; // Set the volume (1.0 is default, lower values reduce volume)
 
         source.connect(gainNode); // Connect source to gain node
-        gainNode.connect(audioCtx.destination); // Connect gain node to destination
+        source.connect(gainNode).connect(audioCtx.destination);
         source.start(0);
     }
 }
