@@ -366,14 +366,16 @@ select {
     }
 
     .container {
-        margin-top:10px;
+        margin-top:0;
+        border-radius:0;
+        width:100%;
     }
 }
 
 @media (max-width: 410px) {
     .drum-instrument .beats input[type="checkbox"] {
-        width: 15px;
-        height: 15px;
+        width: 16px;
+        height: 16px;
     }
 
 
@@ -387,7 +389,7 @@ select {
     }
 
     .numbers span {
-        width: 15px; 
+        width: 16px; 
         font-size: 0.65rem;
     }
 }
