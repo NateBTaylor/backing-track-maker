@@ -20,6 +20,10 @@
                 <button class="tab" data-target="#drums-tab">Drums</button>
             </div>
             <div id="bass-tab" class="tab-content active">
+                <div class="volume">
+                    <label for="bass-volume">Bass Volume:</label>
+                    <input type="range" id="bass-volume" min="0" max="2" step="0.01" value="1" onchange="updateBassVolume()">
+                </div>
                 <div class="rhythm-selector">
                     <label class="rhythm-label" for="rhythm-select">Rhythm Select:</label>
                     <select class="rhythm-select" id="rhythm-select">
@@ -56,6 +60,10 @@
             </div>
 
             <div id="drums-tab" class="tab-content">
+                <div class="volume">
+                    <label for="drum-volume">Drum Volume:</label>
+                    <input type="range" id="drum-volume" min="0" max="2" step="0.01" value="1" onchange="updateDrumVolume()">
+                </div>
                 <div class="drum-presets">
                     <h3>Drum Presets:</h3>
                     <div class="preset-chips">
