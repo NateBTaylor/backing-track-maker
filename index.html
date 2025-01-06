@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backing Track Maker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Backing Track Maker</h1>
+        <div class="settings">
+            <label for="tempo">Set Tempo (BPM):</label>
+            <input type="number" id="tempo" value="60">
+            <label for="rhythm-select">Rhythm Select:</label>
+            <select class="rhythm-select" id="rhythm-select">
+                <option value="4">Quarter Note</option>
+                <option value="8">Eighth Note</option>
+                <option value="16">Sixteenth Note</option>
+                <option value="2">Half Note</option>
+            </select>
+        </div>
+        <!-- <div class="btns">
+            <button>Add Drums</button>
+            <button onclick="addBass()">Add Bass</button>
+            <button>Add Guitar</button>
+        </div> -->
+        <div class="note-instructions">
+            <p>Any of these notes will work: A, A#, B, C, C#, D, D#, E, F, F#, G, G#. Put an X if you have an empty space that you don't want to ring out.</p>
+        </div>
+        <div class="measures">
+            <div class="measure">
+                <div class="note">
+                    <input type="text" maxlength="2">
+                </div>
+                <div class="note">
+                    <input type="text" maxlength="2">
+                </div>
+                <div class="note">
+                    <input type="text" maxlength="2">
+                </div>
+                <div class="note">
+                    <input type="text" maxlength="2">
+                </div>
+            </div>
+        </div>
+        <div class="measure-btns">
+            <button class="add-measure-btn" onclick="addMeasure()">+</button>
+            <button class="remove-measure-btn" onclick="removeMeasure()">-</button>
+        </div>
+        <button class="play-btn play-bass" onclick = "playBassNotes()">Play Bass Track</button>
+
+        <audio id="kick" src="sounds/bass_notes/c.wav" preload="auto"></audio>
+        <audio id="snare" src="sounds/bass_notes/d.wav" preload="auto"></audio>
+        <audio id="closedHiHat" src="sounds/bass_notes/e.wav" preload="auto"></audio>
+        <audio id="openHiHat" src="sounds/bass_notes/f.wav" preload="auto"></audio>
+        <audio id="tom" src="sounds/bass_notes/g.wav" preload="auto"></audio>
+        <audio id="crash" src="sounds/bass_notes/a.wav" preload="auto"></audio>
+
+        <div class="drums">
+            <div class="drum-instrument top-numbers">
+                <h3></h3>
+                <div class="numbers">
+                    <span>1</span>
+                    <span>2</span>
+                    <span>3</span>
+                    <span>4</span>
+                    <span>5</span>
+                    <span>6</span>
+                    <span>7</span>
+                    <span>8</span>
+                    <span>9</span>
+                    <span>10</span>
+                    <span>11</span>
+                    <span>12</span>
+                    <span>13</span>
+                    <span>14</span>
+                    <span>15</span>
+                    <span>16</span>
+                </div>
+            </div>
+            <div class="drum-instrument kick" data-drum="kick">
+                <h3>Kick</h3>
+                <div class="beats">
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                </div>
+            </div>
+            <div class="drum-instrument snare" data-drum="snare">
+                <h3>Snare</h3>
+                <div class="beats">
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                </div>
+            </div>
+            <div class="drum-instrument tom" data-drum="tom">
+                <h3>Tom</h3>
+                <div class="beats">
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                </div>
+            </div>
+            <div class="drum-instrument open-hi-hat" data-drum="openHiHat">
+                <h3>Open Hi Hat</h3>
+                <div class="beats">
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                </div>
+            </div>
+            <div class="drum-instrument closed-hi-hat" data-drum="closedHiHat">
+                <h3>Closed Hi Hat</h3>
+                <div class="beats">
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                </div>
+            </div>
+            <div class="drum-instrument crash" data-drum="crash">
+                <h3>Crash Cymbal</h3>
+                <div class="beats">
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                    <input type="checkbox" class="beat"/>
+                </div>
+            </div>
+        </div>
+        <button class="play-btn play-drums" onclick = "playDrums()">Play Drum Track</button>
+        <button class="play-btn play-all" onclick="playAll()">Play Whole Track</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
