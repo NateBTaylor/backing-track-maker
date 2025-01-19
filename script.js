@@ -213,7 +213,7 @@ async function publishTrack() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(trackData),
     });
-    alert("Published")
+    alert("Published at: " +  "natebtaylor.github.io/backing-track-maker/?track=" + trackData.id)
 }
 
 function updateMeasures() {
