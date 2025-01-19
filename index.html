@@ -8,11 +8,22 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Backing Track Maker</h1>
+        <div class="nav">
+            <!-- <a href="https://natebtaylor.github.io/backing-track-maker" class="logo-stuff">
+                <img src="https://drive.google.com/thumbnail?id=1WcALNjlYPAVRzPbJerkKLzViWVwG2obh" class="logo"></img>
+                <h3 class="logo-text">Eternal Jam</h3>
+            </a> -->
+            <h1 class="title">Backing Track Generator</h1>
+            <button class="publish-btn" onclick="publishTrack()">Publish</button>
+        </div>
         <div class="settings">
             <label for="tempo">Set Tempo (BPM):</label>
             <input type="number" id="tempo" value="60">
         </div>
+        <!-- <label for="progression">Set Chord Progression:</label>
+        <input type="text" id="progression">
+        <p class="instructions">Setting a chord progression is optional. Capitalize and separate with commas.</p>
+        <button class="generate-btn" onclick="generateTrack()">Generate Track</button> -->
 
         <div class="tab-container">
             <div class="tabs">
@@ -34,7 +45,7 @@
                     </select>
                 </div>
                 <div class="note-instructions">
-                    <p>Any of these notes will work: A, A#, B, C, C#, D, D#, E, F, F#, G, G#. Put an X if you have an empty space that you don't want to ring out.</p>
+                    <p class="instructions">Any of these notes will work: A, A#, B, C, C#, D, D#, E, F, F#, G, G#. Put an X if you have an empty space that you don't want to ring out.</p>
                 </div>
                 <div class="measures">
                     <div class="measure">
@@ -75,7 +86,7 @@
                     </div>
                 </div>
                 <div class="drums">
-                    <div class="drum-instrument top-numbers">
+                    <div class="drum-grid top-numbers">
                         <h3></h3>
                         <div class="numbers">
                             <span>1</span>
@@ -99,114 +110,126 @@
                     <div class="drum-instrument kick" data-drum="kick">
                         <h3>Kick</h3>
                         <div class="beats">
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                            
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                                        
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                 
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                           
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                         
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                         
                         </div>
                     </div>
                     <div class="drum-instrument snare" data-drum="snare">
                         <h3>Snare</h3>
                         <div class="beats">
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                            
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                                        
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                 
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                           
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                         
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/> 
                         </div>
                     </div>
                     <div class="drum-instrument tom" data-drum="tom">
                         <h3>Tom</h3>
                         <div class="beats">
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                            
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                                        
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                 
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                           
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                         
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/> 
                         </div>
                     </div>
                     <div class="drum-instrument hi-hat" data-drum="hihat">
                         <h3>Hi Hat</h3>
                         <div class="beats">
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                            
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                                        
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                 
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                           
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                         
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/> 
                         </div>
                     </div>
                     <div class="drum-instrument crash" data-drum="crash">
                         <h3>Crash</h3>
                         <div class="beats">
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
-                            <input type="checkbox" class="beat"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                            
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                                        
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                 
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                           
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>                         
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/>
+                            <input type="checkbox" class="beat" onchange="updateMeasureList()"/> 
                         </div>
                     </div>
                 </div>
+                <div class="drum-measure-selector">
+                    <span class="chip chip-on drum-measure-chip" onclick="changeMeasure(0)">1</span>
+                    <div class="drum-measure-btns">
+                        <button class="add-16" onclick="addDrumMeasure()">+</button>
+                        <button class="remove-16" onclick="removeDrumMeasure()">-</button>
+                    </div>
+                </div>
+                <button class="clear-btn" onclick="clearDrumMachine()">Clear</button>
                 <button class="play-btn play-drums" onclick = "playDrums()">Play Drum Track</button>
             </div>
         </div>
         <div class="play-all-container">
             <button class="play-btn play-all" onclick="playAll()">Play Whole Track</button>
+        </div>
+        <div class="all-tracks">
+            <h3>More Backing Tracks:</h3>
+            <div class="more-backing-tracks"></div>
         </div>
         <div class="creator-info">
             <p>Thanks for trying it and email any suggestions, changes, or website ideas you have at <a href="mailto:natextaylor@gmail.com">natextaylor@gmail.com</a></p>
