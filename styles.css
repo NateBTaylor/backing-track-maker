@@ -592,7 +592,6 @@ input[type="range"] {
 }
 
 .drum-measure-btns {
-    margin-left:15px;
     display:flex;
     gap:7px;
 }
