@@ -4,6 +4,9 @@ let selectedRhythm = 4
 let bassVolume = 1
 let drumVolume = 1
 
+let currentDrumMeasure = 0
+let drumMeasures = [[]]
+
 const bassVolumeSlider = document.getElementById('bass-volume');
 const drumVolumeSlider = document.getElementById('drum-volume');
 
@@ -13,6 +16,143 @@ function updateBassVolume() {
 
 function updateDrumVolume() {
     drumVolume = drumVolumeSlider.value
+}
+
+let SHEET_ID = "1qAMku0gPh6Vis747VJCAiIg3eL2fg4iZGZ25hPla_Uo"
+const backingTrackDB = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`
+
+async function getTrackData(trackID) {
+
+    const response = await fetch(backingTrackDB);
+    const text = await response.text();
+    
+
+    const json = JSON.parse(text.substring(47).slice(0,-2));
+    const rows = json.table.rows;
+
+    // Convert sheet data to an object
+    const tracks = {};
+    rows.forEach(row => {
+        const id = row.c[0]?.v; // Track ID
+        const notes = row.c[1]?.v;
+        const tempo = row.c[2]?.v;
+        const rhythm = row.c[3]?.v;
+        const kick = row.c[4]?.v;
+        const snare = row.c[5]?.v;
+        const tom = row.c[6]?.v;
+        const hihat = row.c[7]?.v;
+        const crash = row.c[8]?.v;
+        const bassVol = row.c[9]?.v;
+        const drumVol = row.c[10]?.v;
+
+        tracks[id] = { notes, tempo, rhythm, kick, snare, tom, hihat, crash, bassVol, drumVol };
+    });
+
+    return tracks[trackID] || null;
+}
+
+// Example: Retrieve track data from URL parameter
+const urlParams = new URLSearchParams(window.location.search);
+const trackID = urlParams.get("track");
+
+async function getTracks() {
+    const response = await fetch(backingTrackDB);
+    const text = await response.text();
+    
+
+    const json = JSON.parse(text.substring(47).slice(0,-2));
+    const rows = json.table.rows;
+
+    // Convert sheet data to an object
+    const trackNames = [];
+    rows.forEach(row => {
+        const id = row.c[0]?.v; // Track ID
+
+        trackNames.push(id)
+    });
+    let allTracksDisplay = document.querySelector(".more-backing-tracks")
+    for (let i = 0; i < trackNames.length; i++) {
+        const link = document.createElement("a");
+        link.href = `?track=${trackNames[i]}`; // Adjust URL format as needed
+        link.innerText = trackNames[i].replace("-", " ");
+        link.classList.add("track-link"); // Optional: Add a class for styling
+        allTracksDisplay.appendChild(link);
+    }
+}
+
+getTracks()
+
+if (trackID) {
+    getTrackData(trackID).then(track => {
+        if (track) {
+            fillTrack(track)         
+        }
+    });
+}
+
+function fillTrack(track) {
+    let notes = track.notes.split(",")
+    let newMeasureCount = notes.length / track.rhythm
+
+    document.getElementById("rhythm-select").value = track.rhythm
+    selectedRhythm = track.rhythm
+    updateMeasures()
+
+    for (let i = 0; i < newMeasureCount - 1; i++) {
+        addMeasure()
+    }
+
+    let noteNum = 0
+    document.querySelectorAll(".measure").forEach((measure) => {
+        measure.querySelectorAll(".note input").forEach((input) => {
+            input.value = notes[noteNum]
+            noteNum++
+        });
+    });
+
+    document.getElementById("tempo").value = track.tempo
+
+    const drumPattern = {
+        kick: track.kick.split(","),
+        snare: track.snare.split(","),
+        tom: track.tom.split(","),
+        hihat: track.hihat.split(","),
+        crash: track.crash.split(",")
+    }
+
+    document.querySelectorAll('.drum-instrument').forEach(instrument => {
+        const drumType = instrument.getAttribute('data-drum');
+        const beats = instrument.querySelectorAll('.beat');
+
+        if (drumPattern[drumType]) {
+            beats.forEach((beat, i) => {
+                beat.checked = drumPattern[drumType][i] === "1";
+            });
+        }
+    });
+    updateMeasureList()
+
+    let drumMeasureCount = track.kick.split(",").length / 16;
+    for (let i = 0; i < drumMeasureCount - 1; i++) {
+        addDrumMeasure()
+        document.querySelectorAll('.drum-instrument').forEach(instrument => {
+            const drumType = instrument.getAttribute('data-drum');
+            const beats = instrument.querySelectorAll('.beat');
+    
+            if (drumPattern[drumType]) {
+                beats.forEach((beat, j) => {
+                    beat.checked = drumPattern[drumType][16 * ( i+ 1) + j] === "1";
+                });
+            }
+        });
+        updateMeasureList()
+    }
+    changeMeasure(0)
+
+    bassVolume = track.bassVol
+    document.getElementById("bass-volume").value = bassVolume
+    drumVolume = track.drumVol
+    document.getElementById("drum-volume").value = drumVolume
 }
 
 document.getElementById("rhythm-select").addEventListener("change", function() {
@@ -25,6 +165,56 @@ document.getElementById("rhythm-select").addEventListener("change", function() {
         currentAudioSource.stop();
     }
 });
+
+async function publishTrack() {
+
+    let trackName = prompt("Enter a name for your backing track:");
+    if (!trackName) return alert("Track name is required. It can be anything.");
+    trackName = trackName.trim().replace(/\s+/g, "-").toLowerCase();
+
+    const noteValues = [];
+    document.querySelectorAll(".measure").forEach((measure) => {
+        measure.querySelectorAll(".note input").forEach((input) => {
+            if (input.value == "") {
+                noteValues.push(" ")
+            } else {
+                noteValues.push(input.value.toUpperCase());
+            }
+        });
+    });
+
+    let drums = [[], [], [], [], []]
+
+    for (let i = 0; i < drumMeasures.length; i++) {
+        for (let j = 0; j < drumMeasures[i].length; j++) {
+            for (let k = 0; k < drumMeasures[i][j].length; k++) {
+                drums[j].push(drumMeasures[i][j][k] ? 1 : 0)
+            }
+        }
+    }    
+
+    const trackData = {
+        id: trackName,
+        bassNotes: noteValues.join(","),
+        tempo: document.querySelector("#tempo").value,
+        rhythm: document.getElementById("rhythm-select").value,
+        kick: drums[0].join(","),
+        snare: drums[1].join(","),
+        tom: drums[2].join(","),
+        hihat: drums[3].join(","),
+        crash: drums[4].join(","),
+        bassVolume: document.getElementById("bass-volume").value,
+        drumVolume: document.getElementById("drum-volume").value
+    };
+
+    const response = await fetch("https://script.google.com/macros/s/AKfycbxLK-2G9SMqIa0kr3OTsCyYl2-Azw7BWqLHcmwSGh5IKrOSSiqWpLrz0pW1JJAgPc5A1g/exec", {  // Replace with your Apps Script URL
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(trackData),
+    });
+    alert("Published")
+}
 
 function updateMeasures() {
     document.querySelectorAll(".measure").forEach(measure => {
@@ -114,6 +304,8 @@ const drumSounds = {
     tom: 'https://cdn.freesound.org/previews/261/261412_3797507-lq.mp3'
 };
 
+let drumPresets = ["fourOnTheFloor", "rock", "hipHop", "bossaNova", "funk"]
+
 function loadPreset(presetName) {
     const patterns = {
         fourOnTheFloor: {
@@ -131,8 +323,8 @@ function loadPreset(presetName) {
             crash: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         hipHop: {
-            kick: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
-            snare: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+            kick: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+            snare: [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
             hihat: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
             tom: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             crash: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -145,9 +337,9 @@ function loadPreset(presetName) {
             crash: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         funk: {
-            kick: [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
-            snare: [0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1],
-            hihat: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            kick: [1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0],
+            snare: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            hihat: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
             tom: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             crash: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         }
@@ -165,6 +357,8 @@ function loadPreset(presetName) {
             });
         }
     });
+
+    updateMeasureList()
 }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -298,6 +492,8 @@ let isDrumPlaying = false; // Playback state
 let currentBeat = 0; // Tracks the current beat
 let drumPlaybackInterval = null; // Reference to the interval loop
 
+let swing = true
+
 // Load drum audio files into AudioContext buffers
 async function loadDrumBuffers() {
     const promises = Object.keys(drumSounds).map(async (drum) => {
@@ -337,6 +533,8 @@ function playBeat() {
     });
 }
 
+// let swingAmount = 0.4; // Adjust this for more or less swing (0 = straight, 0.5 = triplet feel)
+
 function playDrums() {
     audioCtx.resume();
     const playButton = document.querySelector('.play-drums');
@@ -360,6 +558,11 @@ function playDrums() {
                 playBeat();
                 currentBeat++;
             } else if (isLooping) {
+                if (currentDrumMeasure + 1 < drumMeasures.length) {
+                    changeMeasure(currentDrumMeasure + 1)
+                } else {
+                    changeMeasure(0)
+                }
                 currentBeat = 0; // Reset to the beginning for looping
                 playCurrentBeat(); // Play the first note immediately
             } else {
@@ -377,6 +580,7 @@ function playDrums() {
         drumPlaybackInterval = setInterval(() => {
             playCurrentBeat();
         }, intervalDuration);
+
     } else if (isDrumPlaying && allPlaying) {
         clearInterval(drumPlaybackInterval);
         playButton.innerText = "Pause Drum Track";
@@ -385,31 +589,7 @@ function playDrums() {
         playButton.innerText = "Play Drum Track";
     }
 }
-
 loadDrumBuffers()
-
-// let allPlaying = false;
-
-// function playAll() {
-//     audioCtx.resume();
-//     currentNote = 0;
-//     currentBeat = 0;
-//     allPlaying = !allPlaying;
-
-//     if (allPlaying) {
-//         isBassPlaying = false;
-//         isDrumPlaying = false;
-//         playBassNotes();
-//         playDrums();
-//         document.querySelector(".play-all").innerText = "Pause Whole Track";
-//     } else {
-//         isBassPlaying = true;
-//         isDrumPlaying = true;
-//         playBassNotes();
-//         playDrums();
-//         document.querySelector(".play-all").innerText = "Play Whole Track";
-//     }
-// }
 
 let allPlaying = false
 
@@ -418,11 +598,16 @@ let masterStep = 0; // Tracks the sixteenth-note step in the master clock
 
 function playAll() {
     audioCtx.resume();
-    masterStep = 0; // Reset clock step
     allPlaying = !allPlaying;
 
     currentNote = 0; // Reset bass note position
     currentBeat = 0; // Reset drum beat position
+
+    if (currentDrumMeasure > 0) {
+        changeMeasure(0)
+    }
+
+    masterStep = 0; // Reset clock step
 
     // Stop any currently playing instruments
     if (isBassPlaying || isDrumPlaying) {
@@ -485,7 +670,15 @@ function stopAll() {
 function masterClockTick() {
     // Sixteenth-note logic for drums
     if (isDrumPlaying) {
-        playDrumStep(masterStep % 16);
+        playDrumStep(masterStep % 16);  // Play the current step before changing measure
+        
+        if (masterStep % 16 === 15) {   // Change measure at the LAST step (15), not the first (0)
+            if (currentDrumMeasure + 1 < drumMeasures.length) {
+                changeMeasure(currentDrumMeasure + 1);
+            } else {
+                changeMeasure(0);
+            }
+        }
     }
 
     // Bass plays according to selected rhythm
@@ -542,3 +735,150 @@ function playBassStep(step) {
         currentNote = 0;
     }
 }
+
+let bassLinePatterns = {
+    "straight" : [8, ["1", "1", "1", "1", "1", "1", "1", "1"]],
+    "alternate" : [8, ["1", "5", "1", "5", "1", "5", "1", "5"]],
+    "three-note" : [8, ["1", "1", "5", "5", "7", "7", "1", "1"]],
+    "" : []
+}
+
+function generateTrack() {
+    let rawChordProgression = document.getElementById("progression").value.split(",")
+    let chordProgression = []
+    for (let chord of rawChordProgression) {
+        chordProgression.push(chord.toUpperCase().trim())
+    }
+
+
+    let newBassNotes = []
+    for (let c of chordProgression) {
+        for (let i = 0; i < 8; i++) {
+            newBassNotes.push(c)
+        }
+    }
+
+    selectedRhythm = 8
+    document.querySelector(".rhythm-select").value = 8
+    updateMeasures()
+
+    let newMeasureAmount = chordProgression.length;
+
+    while (measureCount > 1) {
+        removeMeasure()
+    }
+
+    for (let i = 0; i < newMeasureAmount - 1; i++) {
+        addMeasure()
+    }
+
+    let noteNum = 0
+    document.querySelectorAll(".measure").forEach((measure) => {
+        measure.querySelectorAll(".note input").forEach((input) => {
+            input.value = newBassNotes[noteNum]
+            noteNum++
+        });
+    });
+
+    let randomDrums = drumPresets[Math.floor(Math.random() * drumPresets.length)]
+
+    loadPreset(randomDrums)
+
+    document.getElementById("tempo").value = Math.floor(Math.random() * 61) + 60
+}
+
+function addDrumMeasure() {
+    if (isDrumPlaying) {
+        isDrumPlaying = false;
+        clearInterval(drumPlaybackInterval);
+        document.querySelector(".play-drums").innerText = "Play Drum Track";
+    }
+
+    drumMeasures.push([])
+    currentDrumMeasure = drumMeasures.length - 1
+    clearDrumMachine()
+
+    let newDrumMeasure = document.querySelector(".drum-measure-chip").cloneNode(true)
+    newDrumMeasure.innerText = drumMeasures.length
+    
+
+    newDrumMeasure.setAttribute("onclick", `changeMeasure(${drumMeasures.length - 1})`)
+
+    const measures = document.querySelectorAll(".drum-measure-chip")
+    for (let m of measures) {
+        m.classList.remove("chip-on")
+    }
+    newDrumMeasure.classList.add("chip-on")
+
+    document.querySelector(".drum-measure-selector").insertBefore(newDrumMeasure, document.querySelector(".drum-measure-btns"))
+}
+
+function removeDrumMeasure() {
+    const drumMeasureContainer = document.querySelector(".drum-measure-selector");
+    if (!drumMeasureContainer) {
+        return;
+    }
+
+    const chips = drumMeasureContainer.querySelectorAll(".drum-measure-chip");
+
+    if (chips.length === 0) {
+        return;
+    }
+
+    if (chips.length > 1) {
+        // Update the measures array and the current measure index
+        drumMeasures.pop();
+        currentDrumMeasure = Math.max(0, currentDrumMeasure - 1);
+
+        // Remove the last chip from the DOM
+        const lastChip = chips[chips.length - 1];
+        drumMeasureContainer.removeChild(lastChip);
+
+        // Update the displayed measure
+        changeMeasure(currentDrumMeasure);
+    } else {
+        return
+    }
+}
+
+function updateMeasureList() {
+    let measure = []
+    document.querySelectorAll('.drum-instrument').forEach((instrument) => {
+        let inst = []
+        const beats = Array.from(instrument.querySelectorAll(".beat")); // Convert NodeList to array
+        beats.forEach((beat, i) => {
+            inst.push(beat.checked)
+        });
+        measure.push(inst)
+    });
+    drumMeasures[currentDrumMeasure] = measure
+}
+
+function clearDrumMachine() {
+    document.querySelectorAll('.drum-instrument').forEach((instrument) => {
+        const beats = Array.from(instrument.querySelectorAll(".beat")); // Convert NodeList to array
+        beats.forEach((beat, i) => {
+            beat.checked = false
+        });
+    });
+    updateMeasureList()
+}
+
+function changeMeasure(m) {
+    currentDrumMeasure = m
+    let currentM = drumMeasures[currentDrumMeasure]
+    document.querySelectorAll('.drum-instrument').forEach((instrument, i) => {
+        const beats = Array.from(instrument.querySelectorAll(".beat")); // Convert NodeList to array
+        beats.forEach((beat, j) => {
+            beat.checked = currentM[i][j]
+        });
+    });
+
+    const measures = document.querySelectorAll(".drum-measure-chip")
+    for (let m of measures) {
+        m.classList.remove("chip-on")
+    }
+    measures[currentDrumMeasure].classList.add("chip-on")
+}
+
+updateMeasureList()
