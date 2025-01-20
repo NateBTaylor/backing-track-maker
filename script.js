@@ -882,3 +882,17 @@ function changeMeasure(m) {
 }
 
 updateMeasureList()
+
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+        if (audioContext.state === "suspended") {
+            audioContext.resume();
+        }
+    }
+});
+
+document.addEventListener("click", () => {
+    if (audioContext.state === "suspended") {
+        audioContext.resume();
+    }
+});
