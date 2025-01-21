@@ -9,10 +9,6 @@
 <body>
     <div class="container">
         <div class="nav">
-            <!-- <a href="https://natebtaylor.github.io/backing-track-maker" class="logo-stuff">
-                <img src="https://drive.google.com/thumbnail?id=1WcALNjlYPAVRzPbJerkKLzViWVwG2obh" class="logo"></img>
-                <h3 class="logo-text">Eternal Jam</h3>
-            </a> -->
             <h1 class="title">Backing Track Generator</h1>
             <button class="publish-btn" onclick="publishTrack()">Publish</button>
         </div>
@@ -20,10 +16,12 @@
             <label for="tempo">Set Tempo (BPM):</label>
             <input type="number" id="tempo" value="60">
         </div>
-        <!-- <label for="progression">Set Chord Progression:</label>
-        <input type="text" id="progression">
-        <p class="instructions">Setting a chord progression is optional. Capitalize and separate with commas.</p>
-        <button class="generate-btn" onclick="generateTrack()">Generate Track</button> -->
+        <div class="track-with-chord-prog">
+            <label for="progression">Set Chord Progression:</label>
+            <input type="text" id="progression">
+            <p class="instructions">Setting a chord progression is optional. Capitalize and separate with commas.</p>
+            <button class="generate-btn" onclick="generateTrack()">Generate Track</button>
+        </div>
 
         <div class="tab-container">
             <div class="tabs">
