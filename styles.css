@@ -638,3 +638,43 @@ input[type="range"] {
     max-height: 150px; /* Adjust height as needed */
     overflow-y: auto;
 }
+
+.generate-btn {
+    padding: 10px 18px;
+    font-size: 1rem;
+    background-color: var(--button-bg);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top:10px;
+}
+
+.generate-btn:hover {
+    background-color: var(--button-bg-hover);
+}
+
+.track-with-chord-prog {
+    text-align:left;
+    margin:20px;
+}
+
+.track-with-chord-prog label {
+    font-weight:bold;
+}
+
+.track-with-chord-prog input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    background-color: var(--input-bg);
+    font-size: 1rem;
+    margin-top:8px;
+    margin-bottom:6px;
+}
+
+.track-with-chord-prog input:focus {
+    border-color: var(--input-focus-border);
+}
