@@ -753,13 +753,13 @@ function generateTrack() {
 
     let newBassNotes = []
     for (let c of chordProgression) {
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 4; i++) {
             newBassNotes.push(c)
         }
     }
 
-    selectedRhythm = 8
-    document.querySelector(".rhythm-select").value = 8
+    selectedRhythm = 4
+    document.querySelector(".rhythm-select").value = 4
     updateMeasures()
 
     let newMeasureAmount = chordProgression.length;
