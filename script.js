@@ -74,7 +74,7 @@ async function getTracks() {
     for (let i = 0; i < trackNames.length; i++) {
         const link = document.createElement("a");
         link.href = `?track=${trackNames[i]}`; // Adjust URL format as needed
-        link.innerText = trackNames[i].replace("-", " ");
+        link.innerText = trackNames[i].replaceAll("-", " ");
         link.classList.add("track-link"); // Optional: Add a class for styling
         allTracksDisplay.appendChild(link);
     }
