@@ -48,6 +48,10 @@ body {
     justify-content: space-between;
 }
 
+.buy-me-button {
+    scale:0.75;
+}
+
 .publish-btn {
     padding: 10px 18px;
     font-size: 1rem;
